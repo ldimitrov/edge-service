@@ -3,6 +3,7 @@ package com.ldimitrov.edgeservice.client;
 import com.ldimitrov.edgeservice.model.Beer;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,7 @@ public class GoodBeerApiAdapterRestController {
 
     @HystrixCommand(fallbackMethod = "fallback")
     @GetMapping("/good-beers")
+    @CrossOrigin(origins = "*")
     public Collection<Beer> goodBeers() {
         return beerClient.readBeers()
                 .getContent()
