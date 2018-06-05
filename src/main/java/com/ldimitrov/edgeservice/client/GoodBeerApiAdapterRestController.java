@@ -1,10 +1,12 @@
 package com.ldimitrov.edgeservice.client;
 
 import com.ldimitrov.edgeservice.model.Beer;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ public class GoodBeerApiAdapterRestController {
 
     private final BeerClient beerClient;
 
+    @HystrixCommand(fallbackMethod = "fallback")
     @GetMapping("/good-beers")
     public Collection<Beer> goodBeers() {
         return beerClient.readBeers()
@@ -21,6 +24,10 @@ public class GoodBeerApiAdapterRestController {
                 .stream()
                 .filter(this::isGreat)
                 .collect(Collectors.toList());
+    }
+
+    public Collection<Beer> fallback() {
+        return new ArrayList<>();
     }
 
     private boolean isGreat(Beer beer) {
